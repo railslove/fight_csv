@@ -1,7 +1,23 @@
 require 'helper'
 
-class TestFightCsv < Test::Unit::TestCase
-  should "probably rename this file and start testing for real" do
-    flunk "hey buddy, you should probably rename this file and start testing for real"
+describe 'Integration' do
+  before do
+    schema_file = fixture('schema.rb')
+    ProgrammingLanguage = Class.new do
+      include ::FightCSV::Record
+
+      schema schema_file
+    end
+
+    programming_languages = ProgrammingLanguage.from_file fixture('programming_languages.rb')
+  end
+
+  it 'can validate a csv document' do
+    assert_equal true, programming_languages.all? { |programming_language| programming_language.valid? }
+  end
+
+  it 'converts fields of a csv document' do
+    ruby = programming_languages.select { |prog_lang| prog_lang.name == 'ruby' }
+    assert_equal ['object oriented', 'imperative', 'reflective', 'functional'], ruby.paradigms
   end
 end
