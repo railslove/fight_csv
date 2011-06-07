@@ -1,3 +1,8 @@
+PATH
+  remote: ~/Projects/constructable
+  specs:
+    constructable (0.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -8,13 +13,11 @@ GEM
       rake
     rake (0.9.1)
     rcov (0.9.9)
-    shoulda (2.11.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.0.0)
+  constructable (= 0.1)!
   jeweler (~> 1.6.0)
   rcov
-  shoulda

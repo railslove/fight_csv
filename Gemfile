@@ -1,3 +1,4 @@
+source :rubygems
 # Add dependencies required to use your gem here.
 # Example:
 #   gem "activesupport", ">= 2.3.5"
@@ -9,4 +10,4 @@ group :development do
   gem "rcov", ">= 0"
 end
 
-gem 'constructable'
+gem 'constructable', '0.1', path: '~/Projects/constructable/'

@@ -3,9 +3,7 @@ require 'helper'
 describe 'Integration' do
   before do
     schema_file = fixture('schema.rb')
-    ProgrammingLanguage = Class.new do
-      include ::FightCSV::Record
-
+    ProgrammingLanguage = Class.new(FightCSV::Record) do
       schema schema_file
     end
 

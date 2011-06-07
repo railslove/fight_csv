@@ -1,6 +1,6 @@
 module FightCSV
   class Field
-    constructable [:converter, type: Proc, readable: true],
+    constructable [:converter, validate_type: Proc, readable: true],
                   [:required, default: true, readable: true],
                   [:validator, readable: true]
 
