@@ -1,7 +1,7 @@
 module FightCSV
   class Record
     constructable [:data_source, required: true, accessible: true],
-                  [:schema, validate_type: Schema, accessible: true]
+                  [:schema, csv_validate_type: Schema, accessible: true]
 
     @@schema = nil
 
@@ -28,8 +28,8 @@ module FightCSV
       @schema ||= @@schema
     end
 
-    def valid?
-      self.validate[:valid]
+    def csv_valid?
+      self.csv_validate[:valid]
     end
 
     def self.schema(filename = nil, &block)
@@ -41,12 +41,12 @@ module FightCSV
       end
     end
 
-    def validate
-      self.schema.fields.inject({valid: true, errors: []}) do |validation_hash, field|
-        validation_of_field = field.validate(row)
-        validation_hash[:valid] &&= validation_of_field[:valid]
-        validation_hash[:errors].concat validation_of_field[:errors] 
-        validation_hash
+    def csv_validate
+      self.schema.fields.inject({valid: true, errors: []}) do |csv_validation_hash, field|
+        csv_validation_of_field = field.validate(row)
+        csv_validation_hash[:valid] &&= csv_validation_of_field[:valid]
+        csv_validation_hash[:errors].concat csv_validation_of_field[:errors] 
+        csv_validation_hash
       end
     end
 

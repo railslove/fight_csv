@@ -52,7 +52,7 @@ describe 'Record' do
     end
   end
 
-  describe 'schema validation' do
+  describe 'schema csv_validation' do
     before do
       prog_lang_schema = fixture('prog_lang_schema.rb')
       @schema = FightCSV::Schema.new
@@ -61,27 +61,27 @@ describe 'Record' do
       @prog_langs.each { |prog_lang| prog_lang.schema = @schema }
     end
 
-    describe 'valid?' do
-      it 'returns true if a record is valid' do
-        assert_equal true, @prog_langs.all?(&:valid?)
+    describe 'csv_valid?' do
+      it 'returns true if a record is csv_valid' do
+        assert_equal true, @prog_langs.all?(&:csv_valid?)
       end
     end
 
-    describe 'validate' do
-      it 'returns a hash includind valid: true if the record is valid' do
-        assert_equal({valid: true, errors: []}, @prog_langs.first.validate)
+    describe 'csv_validate' do
+      it 'returns a hash includind csv_valid: true if the record is valid' do
+        assert_equal({valid: true, errors: []}, @prog_langs.first.csv_validate)
       end
 
-      it 'returns a hash inlcuding valid: false and detailed error report' do
-        data_source = FightCSV::DataSource.new(header: ['Name','Paradigms','Creator'])
-        not_valid_hash = {
+      it 'returns a hash inlcuding csv_valid: false and detailed error report' do
+        data_source = FightCSV::DataSource.new(header: ['Name','Paradigms'])
+        not_csv_valid_hash = {
           valid: false,
           errors: [
             ":creator is a required field"
         ]
         }
-        assert_equal not_valid_hash,
-          ProgrammingLanguage.new(['LOLCODE','lolfulness',nil], data_source: data_source, schema: @schema).validate
+        assert_equal not_csv_valid_hash,
+          ProgrammingLanguage.new(['LOLCODE','lolfulness',nil], data_source: data_source, schema: @schema).csv_validate
       end
     end
   end

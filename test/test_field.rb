@@ -23,20 +23,10 @@ describe 'Field' do
                    @field.validate([["Git-Hash", "foo"]]))
     end
 
-    it 'checks for existence if field is required( nil attribute)' do
-      assert_equal({errors: [':git_hash is a required field'], valid: false},
-                   @field.validate([%{a b}, ['Git-Hash', nil]]))
-
-    end
-
     it 'checks for existence if field is required(no match)' do
       assert_equal({errors: [':git_hash is a required field'], valid: false},
                    @field.validate([%{a b}]))
 
-    end
-
-    it 'returns true if arguemt is not required and not provided' do
-      assert_equal({valid: true, errors: []}, @field.tap { |f| f.required = false}.validate([['Git-Hash', nil]]))
     end
   end
 

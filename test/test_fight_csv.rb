@@ -12,8 +12,8 @@ describe 'Integration' do
     @programming_languages = ProgrammingLanguage.from_file fixture('programming_languages.csv')
   end
 
-  it 'can validate a csv document' do
-    assert_equal true, @programming_languages.all? { |programming_language| programming_language.valid? }
+  it 'can csv_validate a csv document' do
+    assert_equal true, @programming_languages.all? { |programming_language| programming_language.csv_valid? }
   end
 
   it 'converts fields of a csv document and provides dynamic attribut readers' do

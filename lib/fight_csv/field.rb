@@ -26,7 +26,7 @@ module FightCSV
     def validate(row)
       match = self.match(row)
       validation_hash = {errors: [], valid: true}
-      if match && !match.last.nil?
+      if match
         process_requirement(:validator, match, validation_hash) if validator
       else
         process_requirement(:required, match, validation_hash)
