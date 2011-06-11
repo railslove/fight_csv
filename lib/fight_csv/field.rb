@@ -1,13 +1,58 @@
 module FightCSV
   class Field
-    constructable [:converter, validate_type: Proc, readable: true],
-                  [:required, default: true, readable: true],
-                  [:validator, readable: true]
+
+    REQUIREMENTS = {
+      required: {
+        message: proc { |match| "#{self.identifier.inspect} is a required field" },
+        test: proc { |match, boolean| !boolean },
+      },
+      validator: {
+        message: proc { |match| "Value of #{identifier.inspect} must match #{self.validator}, but was #{match.last}" },
+        test: proc { |match, validator|  self.validator === match.last }
+      }
+    }
+
+    constructable [:converter, validate_type: Proc, accessible: true],
+                  [:identifier, validate_type: Symbol, accessible: true, required: true],
+                  [:required, default: true, accessible: true, accessible: true],
+                  [:validator, accessible: true]
 
     attr_accessor :matcher
 
     def initialize(matcher)
       @matcher = matcher
+    end
+
+    def validate(row)
+      match = self.match(row)
+      validation_hash = {errors: [], valid: true}
+      if match && !match.last.nil?
+        process_requirement(:validator, match, validation_hash) if validator
+      else
+        process_requirement(:required, match, validation_hash)
+      end
+      return validation_hash
+    end
+
+    def process_requirement(requirement_symbol, match, validation_hash)
+      requirement = REQUIREMENTS[requirement_symbol]
+      result = instance_exec(match, attributes[requirement_symbol], &requirement[:test])
+      validation_hash[:valid] &&= result
+      unless result
+        validation_hash[:errors] << instance_exec(match, &requirement[:message])
+      end
+    end
+
+    def match(row)
+      row.find { |n,_| self.matcher === n }
+    end
+
+    def process(row)
+      if match = self.match(row)
+        self.converter ? self.converter.call(match.last) : match.last
+      else
+        nil
+      end
     end
   end
 end

@@ -8,7 +8,8 @@ describe 'Schema' do
       schema.field "Name", {
         required: true,
         converter: converter,
-        validator: /\w*/
+        validator: /\w*/,
+        identifier: :name
       }
 
       field = schema.fields.first

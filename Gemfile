@@ -8,6 +8,7 @@ source :rubygems
 group :development do
   gem "jeweler", "~> 1.6.0"
   gem "rcov", ">= 0"
+  gem 'awesome_print'
 end
 
-gem 'constructable', '0.1', path: '~/Projects/constructable/'
+gem 'constructable', :path => '~/Projects/constructable'
