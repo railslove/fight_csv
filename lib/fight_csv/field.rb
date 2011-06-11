@@ -7,15 +7,15 @@ module FightCSV
         test: proc { |match, boolean| !boolean },
       },
       validator: {
-        message: proc { |match| "Value of #{identifier.inspect} must match #{self.validator}, but was #{match.last}" },
-        test: proc { |match, validator|  self.validator === match.last }
+        message: proc { |match| "Value of #{identifier.inspect} must #{ self.validator.respond_to?(:call) ? "pass" : "match" } #{self.validator}, but was #{match.last}" },
+        test: proc { |match, validator|  validator.respond_to?(:call) ? validator.call(match.last) : self.validator === match.last }
       }
     }
 
     constructable [:converter, validate_type: Proc, accessible: true],
                   [:identifier, validate_type: Symbol, accessible: true, required: true],
                   [:required, default: true, accessible: true, accessible: true],
-                  [:validator, accessible: true, validate_type: Regexp]
+                  [:validator, accessible: true]
 
     attr_accessor :matcher
 

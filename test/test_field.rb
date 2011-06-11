@@ -28,6 +28,18 @@ describe 'Field' do
                    @field.validate([%{a b}]))
 
     end
+
+    it 'also accepts a proc as a validator(not valid)' do
+      @field.validator = ->(git_hash) { git_hash === /[a-z0-9]{5}/ }
+      assert_equal({valid: false, errors: ["Value of :git_hash must pass #{@field.validator.inspect}, but was foo"]},
+                   @field.validate([["Git-Hash", "foo"]]))
+    end
+
+    it 'also accepts a proc as a validator(not valid)' do
+      @field.validator = ->(git_hash) { /[a-z0-9]{5}/ === git_hash  }
+      assert_equal({valid: true, errors: []},
+                   @field.validate([["Git-Hash", "5oa9c"]]))
+    end
   end
 
   describe 'match' do

@@ -4,6 +4,7 @@ require 'rubygems'
 require 'simplecov'
 SimpleCov.start do
   add_filter 'test'
+  add_filter 'help'
 end
 
 require 'minitest/autorun'
