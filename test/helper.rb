@@ -1,5 +1,11 @@
 require 'rubygems'
 #require 'bundler'
+
+require 'simplecov'
+SimpleCov.start do
+  add_filter 'test'
+end
+
 require 'minitest/autorun'
 #begin
 #  Bundler.setup(:default, :development)

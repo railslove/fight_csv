@@ -3,11 +3,13 @@ module FightCSV
     constructable [:data_source, required: true, accessible: true],
                   [:schema, validate_type: Schema, accessible: true]
 
+    @@schema = nil
+
     attr_reader :row
     def self.from_parsed_data(array_of_csv_documents)
       array_of_csv_documents.map do |csv_document|
         csv_document[:body].map do |row|
-          self.new(row, {data_source: csv_document[:data_source], schema: @@schema})
+          self.new(row, data_source: csv_document[:data_source])
         end
       end.flatten
     end
@@ -23,6 +25,7 @@ module FightCSV
 
     def initialize(row)
       @row = self.data_source.header.zip row
+      @schema ||= @@schema
     end
 
     def valid?

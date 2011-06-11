@@ -7,8 +7,9 @@ source :rubygems
 # Include everything needed to run rake, tests, features, etc.
 group :development do
   gem "jeweler", "~> 1.6.0"
-  gem "rcov", ">= 0"
   gem 'awesome_print'
+  gem 'simplecov'
+  gem 'rake'
 end
 
-gem 'constructable', :path => '~/Projects/constructable'
+gem 'constructable'

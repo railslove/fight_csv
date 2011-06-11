@@ -15,7 +15,7 @@ module FightCSV
     constructable [:converter, validate_type: Proc, accessible: true],
                   [:identifier, validate_type: Symbol, accessible: true, required: true],
                   [:required, default: true, accessible: true, accessible: true],
-                  [:validator, accessible: true]
+                  [:validator, accessible: true, validate_type: Regexp]
 
     attr_accessor :matcher
 

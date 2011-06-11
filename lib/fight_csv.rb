@@ -1,3 +1,4 @@
+$LOAD_PATH << File.dirname(File.expand_path(__FILE__))
 require 'constructable'
 require 'fight_csv/schema'
 require 'fight_csv/parser'

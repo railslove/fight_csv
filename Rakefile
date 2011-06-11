@@ -17,8 +17,12 @@ Jeweler::Tasks.new do |gem|
   gem.name = "fight_csv"
   gem.homepage = "http://github.com/mkorfmann/fight_csv"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{JSON-Schema + ActiveModel for CSV}
+  gem.description = %Q{
+Provides a nice DSL to describe your CSV document.
+CSV documents can be validated against this description.
+You can easily define types like Integer or Array for CSV through converters.
+}
   gem.email = "manu@korfmann.info"
   gem.authors = ["Manuel Korfmann"]
   # dependencies defined in Gemfile
