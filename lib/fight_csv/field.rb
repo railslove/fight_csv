@@ -48,11 +48,10 @@ module FightCSV
     end
 
     def process(row)
-      if match = self.match(row)
-        self.converter ? self.converter.call(match.last) : match.last
-      else
-        nil
-      end
+      match = self.match(row)
+      self.converter ? self.converter.call(match.last) : match.last
+    rescue
+      nil
     end
   end
 end

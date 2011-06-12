@@ -68,5 +68,11 @@ describe 'Field' do
       row = [['Foo','6']]
       assert_equal 36, field.process(row)
     end
+
+    it 'does not try to convert a value, if it didn\'t pass validation' do
+      field = FightCSV::Field.new('Foo', identifier: :foo, converter: proc { |value| value ** 2 })
+      row = [['Foo', nil]]
+      assert_equal nil, field.process(row)
+    end
   end
 end
