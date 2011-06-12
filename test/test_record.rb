@@ -12,22 +12,31 @@ describe 'Record' do
       @schema.field('Foz', identifier: :foz)
     end
 
-    it 'works' do
-      record = FightCSV::Record.new(['Bar','Baz'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo', 'Foz']))
-      assert_equal 'Bar', record.foo
-      assert_equal 'Baz', record.foz
-    end
+    describe 'readers' do
+      it 'works' do
+        record = FightCSV::Record.new(['Bar','Baz'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo', 'Foz']))
+        assert_equal 'Bar', record.foo
+        assert_equal 'Baz', record.foz
+      end
 
-    it 'returns nil if the attribute is not defined' do
-      record = FightCSV::Record.new(['Bar'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo']))
-      assert_equal 'Bar', record.foo
-      assert_equal nil, record.foz
-    end
+      it 'returns nil if the attribute is not defined' do
+        record = FightCSV::Record.new(['Bar'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo']))
+        assert_equal 'Bar', record.foo
+        assert_equal nil, record.foz
+      end
 
-    it 'converts values if necessary' do
-      @schema.fields.find { |f| f.matcher == 'Foo' }.converter = proc { |value| value.downcase.to_sym }
-      record = FightCSV::Record.new(['Bar'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo']))
-      assert_equal :bar, record.foo
+      it 'converts values if necessary' do
+        @schema.fields.find { |f| f.matcher == 'Foo' }.converter = proc { |value| value.downcase.to_sym }
+        record = FightCSV::Record.new(['Bar'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo']))
+        assert_equal :bar, record.foo
+      end
+    end
+    describe 'writers' do
+      it 'allow write access to attributes in the row' do
+        record = FightCSV::Record.new(['Bar'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo']))
+        record.foo = 4
+        assert_equal 4, record.foo
+      end
     end
   end
 

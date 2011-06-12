@@ -51,8 +51,13 @@ module FightCSV
     end
 
     def method_missing(meth, *args, &block)
-      if field = schema.fields.find { |field| field.identifier == meth }
-        field.process(self.row)
+      if field = schema.fields.find { |field| /#{field.identifier}(=)?/ === meth }
+        if $1 == '='
+          field = field.match(row)
+          field[1] = args.first
+        else
+          field.process(self.row)
+        end
       else
         super
       end
