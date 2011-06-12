@@ -19,7 +19,7 @@ module FightCSV
 
     attr_accessor :matcher
 
-    def initialize(matcher)
+    def initialize(matcher, options = {})
       @matcher = matcher
     end
 
@@ -52,6 +52,10 @@ module FightCSV
       self.converter ? self.converter.call(match.last) : match.last
     rescue
       nil
+    end
+
+    def ivar_symbol
+      :"@#{self.identifier}"
     end
   end
 end

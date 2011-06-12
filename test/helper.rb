@@ -1,5 +1,26 @@
-require 'rubygems'
-#require 'bundler'
+require 'bundler'
+begin
+  Bundler.setup(:default, :development)
+rescue Bundler::BundlerError => e
+  $stderr.puts e.message
+  $stderr.puts "Run `bundle install` to install missing gems"
+  exit e.status_code
+end
+
+require 'active_record'
+ActiveRecord::Base.establish_connection(
+  :adapter => "sqlite3",
+  :database  => ":memory:"
+)
+
+
+ActiveRecord::Schema.define do
+  create_table :prog_langs do |table|
+      table.column :name, :string
+      table.column :creator, :string
+      table.column :paradigms, :string
+  end
+end
 
 require 'simplecov'
 SimpleCov.start do
@@ -8,14 +29,7 @@ SimpleCov.start do
 end
 
 require 'minitest/autorun'
-#begin
-#  Bundler.setup(:default, :development)
-#rescue Bundler::BundlerError => e
-#  $stderr.puts e.message
-#  $stderr.puts "Run `bundle install` to install missing gems"
-#  exit e.status_code
-#end
-#
+
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'fight_csv'

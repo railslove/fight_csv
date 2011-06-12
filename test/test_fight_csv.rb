@@ -5,7 +5,8 @@ describe 'Integration' do
   before do
 
     schema_file = fixture('prog_lang_schema.rb')
-    ProgrammingLanguage ||= Class.new(FightCSV::Record) do
+    ProgrammingLanguage ||= Class.new do
+      include FightCSV::Record
       schema schema_file
     end
 

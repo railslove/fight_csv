@@ -10,6 +10,9 @@ group :development do
   gem 'awesome_print'
   gem 'simplecov'
   gem 'rake'
+  gem 'activerecord'
+  gem 'sqlite3'
 end
 
 gem 'constructable'
+gem 'activesupport'
