@@ -1,3 +1,9 @@
+GIT
+  remote: git@github.com:mkorfmann/constructable.git
+  revision: 270d9e32c6770d1265136cbe416e124c132db067
+  specs:
+    constructable (0.2.5)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -14,7 +20,6 @@ GEM
     arel (2.0.10)
     awesome_print (0.4.0)
     builder (2.1.2)
-    constructable (0.2.5)
     git (1.2.5)
     i18n (0.5.0)
     jeweler (1.6.2)
@@ -35,7 +40,7 @@ DEPENDENCIES
   activerecord
   activesupport
   awesome_print
-  constructable
+  constructable!
   jeweler (~> 1.6.0)
   rake
   simplecov

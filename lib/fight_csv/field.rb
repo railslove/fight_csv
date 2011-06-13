@@ -36,7 +36,7 @@ module FightCSV
 
     def process_requirement(requirement_symbol, match, validation_hash)
       requirement = REQUIREMENTS[requirement_symbol]
-      result = instance_exec(match, attributes[requirement_symbol], &requirement[:test])
+      result = instance_exec(match, constructable_attributes[requirement_symbol], &requirement[:test])
       validation_hash[:valid] &&= result
       unless result
         validation_hash[:errors] << instance_exec(match, &requirement[:message])
