@@ -10,10 +10,6 @@ group :development do
   gem 'awesome_print'
   gem 'simplecov'
   gem 'rake'
-  gem 'activerecord'
-  gem 'sqlite3'
-  gem 'data_mapper'
-  gem 'dm-sqlite-adapter'
 end
 
 gem 'constructable', git: 'git@github.com:mkorfmann/constructable.git'

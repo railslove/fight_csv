@@ -33,23 +33,31 @@ module FightCSV
     module InstanceMethods
       constructable [:data_source, required: true, accessible: true],
                     [:schema, validate_type: Schema, accessible: true]
+      attr_accessor :row
 
-      attr_reader :row
 
       def initialize(row, options = {})
-        @row = Hash[self.data_source.header.zip row]
         @schema ||= self.class.schema
-        super options
+        self.row = (data_source.header.zip row)
+      end
+
+      def row=(raw_row)
+        @raw_row = raw_row
+        @row = Hash[self.schema.fields.map { |field| [field.identifier,field.process(@raw_row)] }]
+      end
+
+      def schema=(schema)
+        @schema = schema
+        self.row = @raw_row
       end
 
       def valid?
         self.validate[:valid]
       end
 
-
       def validate
         self.schema.fields.inject({valid: true, errors: []}) do |validation_hash, field|
-          validation_of_field = field.validate(row)
+          validation_of_field = field.validate(@raw_row)
           validation_hash[:valid] &&= validation_of_field[:valid]
           validation_hash[:errors].concat validation_of_field[:errors] 
           validation_hash
@@ -57,22 +65,15 @@ module FightCSV
       end
 
       def method_missing(meth, *args, &block)
-        if meth =~ /^/ && field = schema.fields.find { |field| /#{field.identifier}(=)?/ === meth }
+        if field = schema.fields.find { |field| /#{field.identifier}(=)?/ === meth }
           if $1 == '='
-            key = field.match(row).first
-            row[key] = args.first
+            @row[field.identifier] = args.first
           else
-            field.process(self.row)
+            @row[field.identifier]
           end
         else
           super
         end
-      end
-
-      def fields
-        Hash[self.schema.fields.map do |field|
-          [field.identifier.to_s,field.process(row)]
-        end]
       end
     end
   end

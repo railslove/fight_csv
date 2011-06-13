@@ -7,14 +7,6 @@ describe 'Record' do
     @klass = Class.new.send(:include, FightCSV::Record)
   end
 
-  describe 'fields' do
-    it 'returns a hash with identifiers as keys and values as values' do
-      @klass.schema do field 'Foo',identifier: :foo  end
-      instance = @klass.new(['bar'], data_source: FightCSV::DataSource.new(header: ['Foo']))
-      assert_equal({'foo' => 'bar'}, instance.fields)
-    end
-  end
-
   describe 'dynamic attributes' do
     before do
       @schema = FightCSV::Schema.new
@@ -47,27 +39,47 @@ describe 'Record' do
         record.foo = 4
         assert_equal 4, record.foo
       end
+
+      it 'allows to write to fields defined in the schema but not provided through the csv document' do
+        record = @klass.new([], schema: @schema, data_source: FightCSV::DataSource.new(header: []))
+        record.foo = 4
+        assert_equal 4, record.foo
+      end
     end
   end
 
-  describe 'row' do
-    it 'should zip the actual row and the header' do
-      records = Foo.from_parsed_data [{body: [%w{1 2 3},%w{2 3 4}], data_source: FightCSV::DataSource.new(header: ['a','b','c'])}]
-      assert_equal Hash[[['a', '1'],['b','2'],['c','3']]], records.first.row
-    end
-  end
 
   describe 'from_files' do
     it 'reads in files, parses them and maps each row to a Record object' do
       records = Foo.from_files [fixture('programming_languages.csv')]
-      assert_equal Hash[[['Name', 'Ruby'],['Paradigms', 'object oriented,imperative,reflective,functional'],['Creator', 'Yukihiro Matsumoto']]], records.first.row
+      assert_equal [['Name', 'Ruby'],
+         ['Paradigms', 'object oriented,imperative,reflective,functional'],
+         ['Creator', 'Yukihiro Matsumoto']], records.first.instance_variable_get(:@raw_row)
     end
   end
 
-  describe 'from_parsed_data' do
-    it 'maps each row of csv to a record model' do
+  describe 'shared test data' do
+    before do
       records = Foo.from_parsed_data [{body: [%w{1 2 3},%w{2 3 4}], data_source: FightCSV::DataSource.new(header: ['a','b','c'])}]
-      assert_equal Hash[[%w{a 1}, %w{b 2}, %w{c 3}]], records.first.row
+      @record = records.first
+      @record.schema = FightCSV::Schema.new.tap do |schema|
+        converter = ->(value) { value.to_i }
+        schema.field 'a', identifier: :a, converter: converter
+        schema.field 'b', identifier: :b, converter: converter
+        schema.field 'c', identifier: :c, converter: converter
+      end
+    end
+
+    describe 'row' do
+      it 'returns a hash with identifiers as keys and values as values' do
+        assert_equal Hash[[[:a, 1],[:b,2],[:c,3]]], @record.row
+      end
+    end
+
+    describe 'from_parsed_data' do
+      it 'maps each row of csv to a record model' do
+        assert_equal Hash[[[:a, 1], [:b, 2], [:c,3]]], @record.row
+      end
     end
   end
 
