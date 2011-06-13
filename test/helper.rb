@@ -7,21 +7,6 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 
-require 'active_record'
-ActiveRecord::Base.establish_connection(
-  :adapter => "sqlite3",
-  :database  => ":memory:"
-)
-
-
-ActiveRecord::Schema.define do
-  create_table :prog_langs do |table|
-      table.column :name, :string
-      table.column :creator, :string
-      table.column :paradigms, :string
-  end
-end
-
 require 'simplecov'
 SimpleCov.start do
   add_filter 'test'

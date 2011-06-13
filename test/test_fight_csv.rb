@@ -1,6 +1,5 @@
 require 'helper'
 
-
 describe 'Integration' do
   before do
 
