@@ -3,17 +3,17 @@ module FightCSV
     extend ActiveSupport::Concern
 
     module ClassMethods
-      def schema(filename = nil, &block)
-        @schema ||= Schema.new
+      def csv_schema(filename = nil, &block)
+        @csv_schema ||= Schema.new
         if String === filename
-          @schema.instance_eval { eval(File.read(filename)) }
+          @csv_schema.instance_eval { eval(File.read(filename)) }
         elsif block
-          @schema.instance_eval &block
+          @csv_schema.instance_eval &block
         else
-          @schema
+          @csv_schema
         end
       end
-      def from_parsed_data(array_of_csv_documents)
+      def csv_from_parsed_data(array_of_csv_documents)
         array_of_csv_documents.map do |csv_document|
           csv_document[:body].map do |row|
             self.new(row, data_source: csv_document[:data_source])
@@ -21,24 +21,24 @@ module FightCSV
         end.flatten
       end
 
-      def from_files(filenames)
+      def csv_from_files(filenames)
         csv_documents = Parser.from_files(filenames)
-        from_parsed_data(csv_documents)
+        csv_from_parsed_data(csv_documents)
       end
 
-      def from_file(filename)
-        self.from_files [filename]
+      def csv_from_file(filename)
+        self.csv_from_files [filename]
       end
     end
     module InstanceMethods
       constructable [:data_source, required: true, accessible: true],
-                    [:schema, csv_validate_type: Schema, accessible: true]
+                    [:csv_schema, csv_validate_type: Schema, accessible: true]
 
       attr_reader :row
 
       def initialize(row, options = {})
         @row = Hash[self.data_source.header.zip row]
-        @schema ||= self.class.schema
+        @csv_schema ||= self.class.csv_schema
         super options
       end
 
@@ -48,7 +48,7 @@ module FightCSV
 
 
       def csv_validate
-        self.schema.fields.inject({valid: true, errors: []}) do |csv_validation_hash, field|
+        self.csv_schema.fields.inject({valid: true, errors: []}) do |csv_validation_hash, field|
           csv_validation_of_field = field.validate(row)
           csv_validation_hash[:valid] &&= csv_validation_of_field[:valid]
           csv_validation_hash[:errors].concat csv_validation_of_field[:errors] 
@@ -57,7 +57,7 @@ module FightCSV
       end
 
       def method_missing(meth, *args, &block)
-        if field = schema.fields.find { |field| /#{field.identifier}(=)?/ === meth }
+        if meth =~ /^csv_/ && field = csv_schema.fields.find { |field| /#{field.identifier}(=)?/ === meth }
           if $1 == '='
             key = field.match(row).first
             row[key] = args.first
@@ -69,8 +69,8 @@ module FightCSV
         end
       end
 
-      def csv_to_attributes_ivar
-        instance_variable_set(:@attributes,Hash[self.schema.fields.map do |field|
+      def csv_set_attributes_hash
+        instance_variable_set(:@attributes,Hash[self.csv_schema.fields.map do |field|
           [field.identifier.to_s,field.process(row)]
         end])
       end

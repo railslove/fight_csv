@@ -7,10 +7,10 @@ describe 'Integration' do
     schema_file = fixture('prog_lang_schema.rb')
     ProgrammingLanguage ||= Class.new do
       include FightCSV::Record
-      schema schema_file
+      csv_schema schema_file
     end
 
-    @programming_languages = ProgrammingLanguage.from_file fixture('programming_languages.csv')
+    @programming_languages = ProgrammingLanguage.csv_from_file fixture('programming_languages.csv')
   end
 
   it 'can csv_validate a csv document' do
@@ -18,7 +18,7 @@ describe 'Integration' do
   end
 
   it 'converts fields of a csv document and provides dynamic attribut readers' do
-    ruby = @programming_languages.find { |prog_lang| prog_lang.name == 'Ruby' }
-    assert_equal ['object oriented', 'imperative', 'reflective', 'functional'], ruby.paradigms
+    ruby = @programming_languages.find { |prog_lang| prog_lang.csv_name == 'Ruby' }
+    assert_equal ['object oriented', 'imperative', 'reflective', 'functional'], ruby.csv_paradigms
   end
 end
