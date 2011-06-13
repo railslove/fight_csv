@@ -69,11 +69,11 @@ module FightCSV
         end
       end
 
-      #def set_attributes_hash
-      #  instance_variable_set(:@attributes,Hash[self.schema.fields.map do |field|
-      #    [field.identifier.to_s,field.process(row)]
-      #  end])
-      #end
+      def fields
+        Hash[self.schema.fields.map do |field|
+          [field.identifier.to_s,field.process(row)]
+        end]
+      end
     end
   end
 end

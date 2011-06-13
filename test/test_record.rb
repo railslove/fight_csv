@@ -7,12 +7,11 @@ describe 'Record' do
     @klass = Class.new.send(:include, FightCSV::Record)
   end
 
-  describe 'create_attributes_hash' do
-    it 'makes a active_record comptaible attributes hash' do
+  describe 'fields' do
+    it 'returns a hash with identifiers as keys and values as values' do
       @klass.schema do field 'Foo',identifier: :foo  end
       instance = @klass.new(['bar'], data_source: FightCSV::DataSource.new(header: ['Foo']))
-      instance.set_attributes_hash
-      assert_equal({'foo' => 'bar'}, instance.instance_variable_get(:@attributes))
+      assert_equal({'foo' => 'bar'}, instance.fields)
     end
   end
 
