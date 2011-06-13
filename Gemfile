@@ -14,5 +14,5 @@ group :development do
   gem 'sqlite3'
 end
 
-gem 'constructable'
+gem 'constructable', git: 'git@github.com:mkorfmann/constructable.git'
 gem 'activesupport'
