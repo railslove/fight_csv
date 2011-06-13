@@ -54,21 +54,21 @@ describe 'Record' do
   describe 'row' do
     it 'should zip the actual row and the header' do
       records = Foo.from_parsed_data [{body: [%w{1 2 3},%w{2 3 4}], data_source: FightCSV::DataSource.new(header: ['a','b','c'])}]
-      assert_equal [['a', '1'],['b','2'],['c','3']], records.first.row
+      assert_equal Hash[[['a', '1'],['b','2'],['c','3']]], records.first.row
     end
   end
 
   describe 'from_files' do
     it 'reads in files, parses them and maps each row to a Record object' do
       records = Foo.from_files [fixture('programming_languages.csv')]
-      assert_equal [['Name', 'Ruby'],['Paradigms', 'object oriented,imperative,reflective,functional'],['Creator', 'Yukihiro Matsumoto']], records.first.row
+      assert_equal Hash[[['Name', 'Ruby'],['Paradigms', 'object oriented,imperative,reflective,functional'],['Creator', 'Yukihiro Matsumoto']]], records.first.row
     end
   end
 
   describe 'from_parsed_data' do
     it 'maps each row of csv to a record model' do
       records = Foo.from_parsed_data [{body: [%w{1 2 3},%w{2 3 4}], data_source: FightCSV::DataSource.new(header: ['a','b','c'])}]
-      assert_equal [%w{a 1}, %w{b 2}, %w{c 3}], records.first.row
+      assert_equal Hash[[%w{a 1}, %w{b 2}, %w{c 3}]], records.first.row
     end
   end
 

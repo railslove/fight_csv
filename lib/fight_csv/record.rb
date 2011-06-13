@@ -37,7 +37,7 @@ module FightCSV
       attr_reader :row
 
       def initialize(row, options = {})
-        @row = self.data_source.header.zip row
+        @row = Hash[self.data_source.header.zip row]
         @schema ||= self.class.schema
         super options
       end
@@ -59,8 +59,8 @@ module FightCSV
       def method_missing(meth, *args, &block)
         if field = schema.fields.find { |field| /#{field.identifier}(=)?/ === meth }
           if $1 == '='
-            field = field.match(row)
-            field[1] = args.first
+            key = field.match(row).first
+            row[key] = args.first
           else
             field.process(self.row)
           end
