@@ -5,15 +5,21 @@ describe 'Record' do
       include  FightCSV::Record
     end
     @klass = Class.new.send(:include, FightCSV::Record)
+
+    @schema = FightCSV::Schema.new
+    @schema.field('Foo', identifier: :foo)
+    @schema.field('Foz', identifier: :foz)
+  end
+
+  describe 'fields' do
+    it 'aggregates fields using the dynamic attribute readers or hard coded readers' do
+      @klass.class_eval { def foo; 1;end }
+      record = @klass.new(['Bar','Baz'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo', 'Foz']))
+      assert_equal({foo: 1, foz: 'Baz'}, record.fields)
+    end
   end
 
   describe 'dynamic attributes' do
-    before do
-      @schema = FightCSV::Schema.new
-      @schema.field('Foo', identifier: :foo)
-      @schema.field('Foz', identifier: :foz)
-    end
-
     describe 'readers' do
       it 'works' do
         record = @klass.new(['Bar','Baz'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo', 'Foz']))

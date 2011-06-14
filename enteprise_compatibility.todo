@@ -1,6 +1,6 @@
 
 * Make an api for big csvfiles, so one object is reused all the time
-* Don't let
 Person.from_file 'bla' do |person|
+* Don't let
 
 end

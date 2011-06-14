@@ -46,6 +46,10 @@ module FightCSV
         @row = Hash[self.schema.fields.map { |field| [field.identifier,field.process(@raw_row)] }]
       end
 
+      def fields
+        Hash[schema.fields.map { |field| [field.identifier, self.send(field.identifier)] }]
+      end
+
       def schema=(schema)
         @schema = schema
         self.row = @raw_row
