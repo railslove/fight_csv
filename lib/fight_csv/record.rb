@@ -51,7 +51,7 @@ module FightCSV
       end
 
       def schema=(schema)
-        @schema = schema
+        super
         self.row = @raw_row
       end
 
@@ -63,7 +63,7 @@ module FightCSV
         self.schema.fields.inject({valid: true, errors: []}) do |validation_hash, field|
           validation_of_field = field.validate(@raw_row)
           validation_hash[:valid] &&= validation_of_field[:valid]
-          validation_hash[:errors].concat validation_of_field[:errors] 
+          validation_hash[:errors] << validation_of_field[:error] if validation_of_field[:error]
           validation_hash
         end
       end

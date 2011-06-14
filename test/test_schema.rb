@@ -6,14 +6,12 @@ describe 'Schema' do
       converter = ->(value) { value.upcase }
 
       schema.field "Name", {
-        required: true,
         converter: converter,
         validator: /\w*/,
         identifier: :name
       }
 
       field = schema.fields.first
-      assert_equal true, field.required
       assert_equal converter, field.converter
       assert_equal /\w*/, field.validator
     end

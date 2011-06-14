@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:mkorfmann/constructable.git
-  revision: 2c9c66f2030c8d960cfd0e24eb7a96bfdea7b932
+  revision: 94ebc89ca654187f1adb603bf0c875b5662749c0
   specs:
     constructable (0.2.5)
 

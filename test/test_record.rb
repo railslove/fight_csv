@@ -110,11 +110,12 @@ describe 'Record' do
       end
 
       it 'returns a hash inlcuding valid: false and detailed error report' do
+        @schema.fields.find { |f| f.identifier == :creator }.validator = /.+/
         data_source = FightCSV::DataSource.new(header: ['Name','Paradigms'])
         not_valid_hash = {
           valid: false,
           errors: [
-            ":creator is a required field"
+            ':creator must match (?-mix:.+), but was ""'
         ]
         }
         assert_equal not_valid_hash,
@@ -134,12 +135,11 @@ describe 'Record' do
 
     it 'also responds to a block' do
       @klass.schema do
-        field 'Foo', required: true, identifier: :foo
+        field 'Foo', identifier: :foo
       end
 
       schema = @klass.schema
       assert_equal 'Foo', schema.fields.first.matcher
-      assert_equal true, schema.fields.first.required
     end
   end
 end

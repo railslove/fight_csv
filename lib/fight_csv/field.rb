@@ -1,21 +1,8 @@
 module FightCSV
   class Field
-
-    REQUIREMENTS = {
-      required: {
-        message: proc { |match| "#{self.identifier.inspect} is a required field" },
-        test: proc { |match, boolean| !boolean },
-      },
-      validator: {
-        message: proc { |match| "Value of #{identifier.inspect} must #{ self.validator.respond_to?(:call) ? "pass" : "match" } #{self.validator}, but was #{match.last}" },
-        test: proc { |match, validator|  validator.respond_to?(:call) ? validator.call(match.last) : self.validator === match.last }
-      }
-    }
-
     constructable [:converter, validate_type: Proc, accessible: true],
                   [:identifier, validate_type: Symbol, accessible: true, required: true],
-                  [:required, default: true, accessible: true, accessible: true],
-                  [:validator, accessible: true]
+                  [:validator, accessible: true, default: /.*/ ]
 
     attr_accessor :matcher
 
@@ -24,32 +11,30 @@ module FightCSV
     end
 
     def validate(row)
-      match = self.match(row)
-      validation_hash = {errors: [], valid: true}
-      if match
-        process_requirement(:validator, match, validation_hash) if validator
+      match = self.match(row).to_s
+      if self.validator.respond_to?(:call) 
+        result = self.validator.call(match)
+        verb = "pass"
       else
-        process_requirement(:required, match, validation_hash)
+        result = self.validator === match
+        verb = "match"
       end
-      return validation_hash
-    end
 
-    def process_requirement(requirement_symbol, match, validation_hash)
-      requirement = REQUIREMENTS[requirement_symbol]
-      result = instance_exec(match, constructable_attributes[requirement_symbol], &requirement[:test])
-      validation_hash[:valid] &&= result
       unless result
-        validation_hash[:errors] << instance_exec(match, &requirement[:message])
+        { valid: false, error: "#{self.identifier.inspect} must #{verb} #{self.validator}, but was #{match.inspect}"}
+      else
+        { valid: true }
       end
     end
 
     def match(row)
-      row.find { |n,_| self.matcher === n }
+      element = row.find { |n,_| self.matcher === n } 
+      element && element.last
     end
 
     def process(row)
       match = self.match(row)
-      self.converter ? self.converter.call(match.last) : match.last
+      self.converter ? self.converter.call(match) : match
     rescue
       nil
     end
