@@ -26,7 +26,7 @@ module FightCSV
         from_parsed_data(documents)
       end
 
-      def from_string
+      def from_string(string)
         document = Parser.from_string(string)
         from_parsed_data(document)
       end
