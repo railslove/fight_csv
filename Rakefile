@@ -22,7 +22,7 @@ Jeweler::Tasks.new do |gem|
 Provides a nice DSL to describe your CSV document.
 CSV documents can be validated against this description.
 You can easily define types like Integer or Array for CSV through converters.
-}
+  }
   gem.email = "manu@korfmann.info"
   gem.authors = ["Manuel Korfmann"]
   # dependencies defined in Gemfile

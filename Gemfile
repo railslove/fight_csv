@@ -12,5 +12,5 @@ group :development do
   gem 'rake'
 end
 
-gem 'constructable', git: 'git@github.com:mkorfmann/constructable.git'
+gem 'constructable'
 gem 'activesupport'

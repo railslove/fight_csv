@@ -20,21 +20,21 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'fight_csv'
 
 class MiniTest::Unit::TestCase
-	def fixture(filename)
-		File.join(File.dirname(File.expand_path(__FILE__)), 'fixtures', filename)
-	end
+  def fixture(filename)
+    File.join(File.dirname(File.expand_path(__FILE__)), 'fixtures', filename)
+  end
 
-	def refute_raises
-		test = -> do
-			begin	
-				yield
-			rescue => e
-				return false, e
-			else
-				true
-			end
-		end
-		boolean, exception = test.call
-		assert boolean, "Expected no exception, but got #{exception}"
-	end
+  def refute_raises
+    test = -> do
+      begin	
+        yield
+      rescue => e
+        return false, e
+      else
+        true
+      end
+    end
+    boolean, exception = test.call
+    assert boolean, "Expected no exception, but got #{exception}"
+  end
 end

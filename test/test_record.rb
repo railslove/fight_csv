@@ -11,6 +11,9 @@ describe 'Record' do
     @schema.field('Foz', identifier: :foz)
   end
 
+  describe 'from_string' do
+  end
+
   describe 'fields' do
     it 'aggregates fields using the dynamic attribute readers or hard coded readers' do
       @klass.class_eval { def foo; 1;end }

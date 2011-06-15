@@ -9,6 +9,13 @@ describe 'Field' do
     end
   end
 
+  describe 'ivar_symbol' do
+    it 'returns the identifier as an ivar symbol' do
+      field = FightCSV::Field.new(/Field/, identifier: :field)
+      assert_equal :@field, field.ivar_symbol
+    end
+  end
+
   describe 'validate' do
     before do
       @field = FightCSV::Field.new(/(Git-Hash)|(Commit-Hash)/,required: true, validator: /[a-z0-9]{5}/, identifier: :git_hash)
