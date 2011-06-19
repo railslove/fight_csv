@@ -9,7 +9,7 @@ describe 'Integration' do
       schema schema_file
     end
 
-    @programming_languages = ProgrammingLanguage.from_file fixture('programming_languages.csv')
+    @programming_languages = ProgrammingLanguage.records File.open(fixture('programming_languages.csv'))
   end
 
   it 'can validate a csv document' do

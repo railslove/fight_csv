@@ -20,6 +20,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'fight_csv'
 
 class MiniTest::Unit::TestCase
+  include FightCSV
   def fixture(filename)
     File.join(File.dirname(File.expand_path(__FILE__)), 'fixtures', filename)
   end

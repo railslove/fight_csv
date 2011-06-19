@@ -15,5 +15,20 @@ describe 'Schema' do
       assert_equal converter, field.converter
       assert_equal /\w*/, field.validator
     end
+
+    it 'accepts a file name' do
+      schema = Schema.new fixture('prog_lang_schema.rb')
+      assert_equal FightCSV::Schema, schema.class
+      assert_equal 'Name', schema.fields.first.matcher
+      assert_equal 'Creator', schema.fields.last.matcher
+    end
+
+    it 'also responds to a block' do
+      schema = Schema.new do
+        field 'Foo', identifier: :foo
+      end
+
+      assert_equal 'Foo', schema.fields.first.matcher
+    end
   end
 end

@@ -1,23 +1,46 @@
 require 'helper'
 describe 'Record' do
   before do
-    class Foo
-      include  FightCSV::Record
+    @klass = Class.new do
+      include FightCSV::Record
     end
-    @klass = Class.new.send(:include, FightCSV::Record)
-
-    @schema = FightCSV::Schema.new
-    @schema.field('Foo', identifier: :foo)
-    @schema.field('Foz', identifier: :foz)
+    @schema = FightCSV::Schema.new do
+      field('Foo', identifier: :foo)
+      field('Foz', identifier: :foz)
+    end
+    @klass.schema = @schema
   end
 
-  describe 'from_string' do
+  describe 'schema=' do
+    it 'automatically refreshes the row' do
+      instance = @klass.new(%w{bar baz}, header: %w{Bar Foz})
+      instance.schema = FightCSV::Schema.new do
+        field('Bar', identifier: :bar)
+      end
+      assert_equal({ bar: 'bar' }, instance.row)
+    end
+  end
+
+  describe 'records' do
+    it 'maps each row to a record object' do
+      records = @klass.records("Foo,Foz\nbar,baz\nfoo,foz")
+      assert records.all? { |r| Record === r }
+      assert_equal 'bar', records.first.foo
+    end
+  end
+
+  describe 'import' do
+    it 'provides an enumerator for iterating over the csv reusing the same record object' do
+      enum = @klass.import("Foo,Foz\nbar,baz\nfoo,foz")
+      assert enum.map(&:object_id).each_cons(2).all? { |a,b| a == b }, 'Expected all records to be the same object'
+      assert_equal({foo: 'bar', foz: 'baz'}, enum.first.row)
+    end
   end
 
   describe 'fields' do
     it 'aggregates fields using the dynamic attribute readers or hard coded readers' do
       @klass.class_eval { def foo; 1;end }
-      record = @klass.new(['Bar','Baz'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo', 'Foz']))
+      record = @klass.new(['Bar','Baz'], schema: @schema, header: ['Foo', 'Foz'])
       assert_equal({foo: 1, foz: 'Baz'}, record.fields)
     end
   end
@@ -25,58 +48,48 @@ describe 'Record' do
   describe 'dynamic attributes' do
     describe 'readers' do
       it 'works' do
-        record = @klass.new(['Bar','Baz'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo', 'Foz']))
+        record = @klass.new(['Bar','Baz'], schema: @schema, header: ['Foo', 'Foz'])
         assert_equal 'Bar', record.foo
         assert_equal 'Baz', record.foz
       end
 
-      it 'returns nil if the attribute is not defined' do
-        record = @klass.new(['Bar'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo']))
+      it 'returns "" if the attribute is not defined' do
+        record = @klass.new(['Bar'], schema: @schema, header: ['Foo'])
         assert_equal 'Bar', record.foo
-        assert_equal nil, record.foz
+        assert_equal "", record.foz
       end
 
       it 'converts values if necessary' do
         @schema.fields.find { |f| f.matcher == 'Foo' }.converter = proc { |value| value.downcase.to_sym }
-        record = @klass.new(['Bar'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo']))
+        record = @klass.new(['Bar'], schema: @schema,header: ['Foo'])
         assert_equal :bar, record.foo
       end
     end
     describe 'writers' do
       it 'allow write access to attributes in the row' do
-        record = @klass.new(['Bar'], schema: @schema, data_source: FightCSV::DataSource.new(header: ['Foo']))
+        record = @klass.new(['Bar'], schema: @schema, header: ['Foo'])
         record.foo = 4
         assert_equal 4, record.foo
       end
 
       it 'allows to write to fields defined in the schema but not provided through the csv document' do
-        record = @klass.new([], schema: @schema, data_source: FightCSV::DataSource.new(header: []))
+        record = @klass.new([], schema: @schema,header: [])
         record.foo = 4
         assert_equal 4, record.foo
       end
     end
   end
 
-
-  describe 'from_files' do
-    it 'reads in files, parses them and maps each row to a Record object' do
-      records = Foo.from_files [fixture('programming_languages.csv')]
-      assert_equal [['Name', 'Ruby'],
-         ['Paradigms', 'object oriented,imperative,reflective,functional'],
-         ['Creator', 'Yukihiro Matsumoto']], records.first.instance_variable_get(:@raw_row)
-    end
-  end
-
   describe 'shared test data' do
     before do
-      records = Foo.from_parsed_data [{body: [%w{1 2 3},%w{2 3 4}], data_source: FightCSV::DataSource.new(header: ['a','b','c'])}]
-      @record = records.first
-      @record.schema = FightCSV::Schema.new.tap do |schema|
+      @class = Class.new { include FightCSV::Record }
+      @class.schema  do
         converter = ->(value) { value.to_i }
-        schema.field 'a', identifier: :a, converter: converter
-        schema.field 'b', identifier: :b, converter: converter
-        schema.field 'c', identifier: :c, converter: converter
+        field 'a', identifier: :a, converter: converter
+        field 'b', identifier: :b, converter: converter
+        field 'c', identifier: :c, converter: converter
       end
+      @record = @class.new %w{1 2 3}, header: ['a','b','c']
     end
 
     describe 'row' do
@@ -84,21 +97,16 @@ describe 'Record' do
         assert_equal Hash[[[:a, 1],[:b,2],[:c,3]]], @record.row
       end
     end
-
-    describe 'from_parsed_data' do
-      it 'maps each row of csv to a record model' do
-        assert_equal Hash[[[:a, 1], [:b, 2], [:c,3]]], @record.row
-      end
-    end
   end
 
   describe 'schema validation' do
     before do
       prog_lang_schema = fixture('prog_lang_schema.rb')
-      @schema = FightCSV::Schema.new
-      @schema.instance_eval { eval(File.read(prog_lang_schema)) }
-      @prog_langs = Foo.from_parsed_data FightCSV::Parser.from_files([fixture('programming_languages.csv')])
-      @prog_langs.each { |prog_lang| prog_lang.schema = @schema }
+      @prog_lang = Class.new do
+        include FightCSV::Record
+        schema prog_lang_schema
+      end
+      @prog_langs = @prog_lang.records(File.open(fixture('programming_languages.csv')))
     end
 
     describe 'valid?' do
@@ -107,42 +115,18 @@ describe 'Record' do
       end
     end
 
-    describe 'validate' do
+    describe 'errors' do
       it 'returns a hash includind valid: true if the record is valid' do
         assert_equal({valid: true, errors: []}, @prog_langs.first.validate)
       end
 
       it 'returns a hash inlcuding valid: false and detailed error report' do
-        @schema.fields.find { |f| f.identifier == :creator }.validator = /.+/
-        data_source = FightCSV::DataSource.new(header: ['Name','Paradigms'])
-        not_valid_hash = {
-          valid: false,
-          errors: [
-            ':creator must match (?-mix:.+), but was ""'
-        ]
-        }
-        assert_equal not_valid_hash,
-          Foo.new(['LOLCODE','lolfulness',nil], data_source: data_source, schema: @schema).validate
+        @prog_lang.schema.fields.find { |f| f.identifier == :creator }.validator = /.+/
+        errors = [ ':creator must match (?-mix:.+), but was ""']
+        instance = @prog_lang.new(['LOLCODE','lolfulness',nil], header: ['Name','Paradigms'])
+        assert_equal false, instance.valid?
+        assert_equal errors, instance.errors
       end
-    end
-  end
-
-  describe 'schema' do
-    it 'accepts a file name' do
-      @klass.schema fixture('prog_lang_schema.rb')
-      schema = @klass.schema
-      assert_equal FightCSV::Schema, schema.class
-      assert_equal 'Name', schema.fields.first.matcher
-      assert_equal 'Creator', schema.fields.last.matcher
-    end
-
-    it 'also responds to a block' do
-      @klass.schema do
-        field 'Foo', identifier: :foo
-      end
-
-      schema = @klass.schema
-      assert_equal 'Foo', schema.fields.first.matcher
     end
   end
 end

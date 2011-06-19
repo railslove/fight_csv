@@ -3,52 +3,52 @@ module FightCSV
     extend ActiveSupport::Concern
 
     module ClassMethods
+      def schema=(schema)
+        @schema = schema
+      end
+
+      def records(io)
+        data_source = DataSource.new(io: io)
+        data_source.map { |row,additions|self.new(row, additions) }
+      end
+
+      def import(io)
+        Enumerator.new do |yielder|
+          record = self.new
+          data_source = DataSource.new(io: io)
+          data_source.each do |row, additions|
+            record.header = additions[:header]
+            record.row = row
+            yielder << record
+          end
+        end
+      end
+
       def schema(filename = nil, &block)
-        @schema ||= Schema.new
-        if String === filename
-          @schema.instance_eval { eval(File.read(filename)) }
-        elsif block
-          @schema.instance_eval &block
+        if filename || block
+          @schema = Schema.new(filename, &block) 
         else
           @schema
         end
       end
-      def from_parsed_data(array_of_documents)
-        array_of_documents.map do |document|
-          document[:body].map do |row|
-            self.new(row, data_source: document[:data_source])
-          end
-        end.flatten
-      end
-
-      def from_files(filenames)
-        documents = Parser.from_files(filenames)
-        from_parsed_data(documents)
-      end
-
-      def from_string(string)
-        document = Parser.from_string(string)
-        from_parsed_data(document)
-      end
-
-      def from_file(filename)
-        self.from_files [filename]
-      end
     end
+
     module InstanceMethods
-      constructable [:data_source, required: true, accessible: true],
-                    [:schema, validate_type: Schema, accessible: true]
+      constructable :schema, validate_type: Schema, accessible: true
+      constructable :header, accessible: true
+
       attr_accessor :row
+      attr_reader :errors
 
 
-      def initialize(row, options = {})
+      def initialize(row = nil,options = {})
         @schema ||= self.class.schema
-        self.row = (data_source.header.zip row)
+        self.row = row if row
       end
 
       def row=(raw_row)
         @raw_row = raw_row
-        @row = Hash[self.schema.fields.map { |field| [field.identifier,field.process(@raw_row)] }]
+        @row = Hash[self.schema.fields.map { |field| [field.identifier,field.process(@raw_row, @header)] }]
       end
 
       def fields
@@ -61,12 +61,14 @@ module FightCSV
       end
 
       def valid?
-        self.validate[:valid]
+        validation = self.validate
+        @errors = validate[:errors]
+        validation[:valid]
       end
 
       def validate
         self.schema.fields.inject({valid: true, errors: []}) do |validation_hash, field|
-          validation_of_field = field.validate(@raw_row)
+          validation_of_field = field.validate(@raw_row, @header)
           validation_hash[:valid] &&= validation_of_field[:valid]
           validation_hash[:errors] << validation_of_field[:error] if validation_of_field[:error]
           validation_hash

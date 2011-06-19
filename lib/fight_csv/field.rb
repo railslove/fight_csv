@@ -1,8 +1,8 @@
 module FightCSV
   class Field
-    constructable [:converter, validate_type: Proc, accessible: true],
-                  [:identifier, validate_type: Symbol, accessible: true, required: true],
-                  [:validator, accessible: true, default: /.*/ ]
+    constructable :converter, validate_type: Proc, accessible: true
+    constructable :identifier, validate_type: Symbol, accessible: true, required: true
+    constructable :validator, accessible: true, default: ->{/.*/}
 
     attr_accessor :matcher
 
@@ -10,13 +10,13 @@ module FightCSV
       @matcher = matcher
     end
 
-    def validate(row)
-      match = self.match(row).to_s
+    def validate(row, header = nil)
+      match = self.match(row, header).to_s
       if self.validator.respond_to?(:call) 
         result = self.validator.call(match)
         verb = "pass"
       else
-        result = self.validator === match
+        result = (self.validator === match)
         verb = "match"
       end
 
@@ -27,16 +27,20 @@ module FightCSV
       end
     end
 
-    def match(row)
-      element = row.find { |n,_| self.matcher === n } 
-      element && element.last
+    def match(row, header = nil)
+      case self.matcher
+      when Integer
+        row[matcher-1]
+      else
+        raise ArgumentError, 'No header is provided, but a matcher other than an Integer requires one' unless header
+        index = header.index  { |n| self.matcher === n }
+        index ? row[index] : nil
+      end
     end
 
-    def process(row)
-      match = self.match(row)
+    def process(row, header = nil)
+      match = self.match(row, header).to_s
       self.converter ? self.converter.call(match) : match
-    rescue
-      nil
     end
 
     def ivar_symbol
