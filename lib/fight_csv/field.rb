@@ -25,7 +25,7 @@ module FightCSV
 
     def validate(row, header = nil)
       match = self.match(row, header).to_s
-      if self.validator.respond_to?(:call) 
+      if self.validator.respond_to?(:call)
         result = self.validator.call(match)
         verb = "pass"
       else
