@@ -17,6 +17,8 @@ Date,Person,Client/Project,Minutes,Tags,Billable
 2011-08-08,John Doe,handsomelabs,60,"blabla, meeting",yes
 ```
 
+## Schema
+
 Now you can define a class representing a row of the file. You only need
 to include ```FightCSV::Record```.
 
@@ -59,7 +61,7 @@ class LogEntry
       identifier: :project
     }
 
-    field "Billable" {
+    field "Billable", {
       converter: ->(string) { string == "yes" ? true : false }
     }
   end
@@ -81,11 +83,11 @@ class LogEntry
       identifier: :project
     }
 
-    field "Billable" {
+    field "Billable", {
       converter: ->(string) { string == "yes" ? true : false }
     }
 
-    field "Date" {
+    field "Date", {
       validate: /\d{2}\.\d{2}\.\d{4}/,
       converter: ->(string) { Date.parse(string) }
     }
@@ -104,20 +106,20 @@ class LogEntry
       identifier: :project
     }
 
-    field "Billable" {
+    field "Billable", {
       converter: ->(string) { string == "yes" ? true : false }
     }
 
-    field "Date" {
+    field "Date", {
       validate: /\d{2}\.\d{2}\.\d{4}/,
       converter: ->(string) { Date.parse(string) }
     }
 
-    field "Tags" {
+    field "Tags", {
       converter: ->(string) { string.split(",") }
     }
 
-    field "Minutes" {
+    field "Minutes", {
       validate: /\d+/,
       converter: ->(string) { string.to_i }
     }
@@ -125,13 +127,33 @@ class LogEntry
 end
 ```
 
+## Parsing CSV
+
+With the schema definition you're finally able to parse some CSV. There
+are two possible ways of doing this:
+
+1. ```LogEntry.records``` will return an array with all rows
+   mapped to instances of LogEntry.
+
+```ruby
+LogEntry.records(csv).map(&:minutes).reduce(:+)
+#=> 780
+```
+
+2. ```LogEntry.import`` will pass the same LogEntry instance with the
+   row changed for every iteration.
+
+```ruby
+tags = Hash.new { [] }
+LogEntry.import(csv).each do |log_entry|
+  names[log_entry.person] |= log_entry.tags
+end
+tags["John Doe"]
+#=> ["blabla", "meeting", "blogpost", "coding"]
+  
 
 
-
-
-
-
-# Contributing to fight_csv
+## Contributing to fight\_csv
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
@@ -139,7 +161,7 @@ end
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
-== Copyright
+## Copyright
 
 Copyright (c) 2011 Manuel Korfmann. See LICENSE.txt for
 further details.

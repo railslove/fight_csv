@@ -10,7 +10,7 @@ module FightCSV
       end
     end
 
-    def field(fieldname, constructor_hash)
+    def field(fieldname, constructor_hash = {})
       self.fields << Field.new(fieldname, constructor_hash)
     end
   end

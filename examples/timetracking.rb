@@ -22,27 +22,33 @@ CSV
 class LogEntry
   include FightCSV::Record
   schema do
-    field "Date", {
-      converter: ->(string) { Date.parse(string) },
-      identifier: :date
-    }
-
-    field "Name", {
-      identifier: :name,
-    }
-
-    field "Minutes", {
-      identifier: :minutes,
-      converter: ->(string) { string.to_i }
+    field "Person"
+    field "Client/Project", {
+      identifier: :project
     }
 
     field "Billable", {
-      identifier: :billable,
       converter: ->(string) { string == "yes" ? true : false }
+    }
+
+    field "Date", {
+      validate: /\d{2}\.\d{2}\.\d{4}/,
+      converter: ->(string) { Date.parse(string) }
+    }
+
+    field "Tags", {
+      converter: ->(string) { string.split(",") }
+    }
+
+    field "Minutes", {
+      validate: /\d+/,
+      converter: ->(string) { string.to_i }
     }
   end
 end
 
 
-records = LogEntry.records csv
-puts records.map(&:minutes).reduce(&:+)
+names = Hash.new { [] }
+LogEntry.import(csv).each do |log_entry|
+  names[log_entry.person] |= log_entry.tags
+end
