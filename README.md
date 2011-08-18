@@ -150,7 +150,7 @@ LogEntry.import(csv).each do |log_entry|
 end
 tags["John Doe"]
 #=> ["blabla", "meeting", "blogpost", "coding"]
-  
+```
 
 
 ## Contributing to fight\_csv
