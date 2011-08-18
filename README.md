@@ -133,14 +133,14 @@ With the schema definition you're finally able to parse some CSV. There
 are two possible ways of doing this:
 
 1. ```LogEntry.records``` will return an array with all rows
-   mapped to instances of LogEntry.
+   mapped to instances of ```LogEntry```.
 
 ```ruby
 LogEntry.records(csv).map(&:minutes).reduce(:+)
 #=> 780
 ```
 
-2. ```LogEntry.import`` will pass the same LogEntry instance with the
+2. ```LogEntry.import``` will pass the same ```LogEntry``` instance with the
    row changed for every iteration.
 
 ```ruby
