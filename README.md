@@ -132,25 +132,17 @@ end
 With the schema definition you're finally able to parse some CSV. There
 are two possible ways of doing this:
 
-1. ```LogEntry.records``` will return an array with all rows
-   mapped to instances of ```LogEntry```.
+1.  ```LogEntry.records``` will return an array with all rows
+    mapped to instances of ```LogEntry```.
 
-```ruby
-LogEntry.records(csv).map(&:minutes).reduce(:+)
-#=> 780
-```
+2.  ```LogEntry.import``` will return an enumerator which will pass the same ```LogEntry``` instance with the
+    row changed for every iteration.
 
-2. ```LogEntry.import``` will pass the same ```LogEntry``` instance with the
-   row changed for every iteration.
-
-```ruby
-tags = Hash.new { [] }
-LogEntry.import(csv).each do |log_entry|
-  names[log_entry.person] |= log_entry.tags
-end
-tags["John Doe"]
-#=> ["blabla", "meeting", "blogpost", "coding"]
-```
+    ```ruby
+    LogEntry.import(csv).map(&:minutes).reduce(:+)
+    #=> 780
+    ```
+    Doing so you can avoid memory leaks on big csv documents.
 
 
 ## Contributing to fight\_csv
