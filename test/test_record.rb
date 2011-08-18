@@ -56,7 +56,7 @@ describe 'Record' do
       it 'returns "" if the attribute is not defined' do
         record = @klass.new(['Bar'], schema: @schema, header: ['Foo'])
         assert_equal 'Bar', record.foo
-        assert_equal "", record.foz
+        assert_equal nil, record.foz
       end
 
       it 'converts values if necessary' do

@@ -9,12 +9,10 @@ module FightCSV
     constructable :io, readable: true
     constructable :csv_options,
       accessible: true,
-      default: ->{ Hash.new },
-      validate_type: Hash,
-      validate: ->(hash) { hash.keys.all? { |k| ALLOWED_OPTIONS.include?(k) } }
+      default: ->{ Hash.new }
 
     def each
-      csv = CSV.new(self.io, csv_options)
+      csv = CSV.new(self.io, Hash[csv_options.select { |opt| ALLOWED_OPTIONS.include opt }])
       additions = {}
       additions[:header] = csv.shift if self.header
       csv.each do |row|

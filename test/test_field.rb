@@ -9,6 +9,20 @@ describe 'Field' do
     end
   end
 
+  describe 'identifier' do
+    it 'defaults to the matcher downcase' do
+      field = FightCSV::Field.new("Field")
+      assert_equal field.identifier, :field
+    end
+
+    it 'raises an error if nor a identifier is present neither the matcher is a string' do
+      field = FightCSV::Field.new(5)
+      assert_raises ArgumentError do
+        field.identifier
+      end
+    end
+  end
+
   describe 'ivar_symbol' do
     it 'returns the identifier as an ivar symbol' do
       field = FightCSV::Field.new(/Field/, identifier: :field)
@@ -92,7 +106,7 @@ describe 'Field' do
     it 'returns "" if it doesnt find a match' do
       row = ['6']
       header = ['Bar']
-      assert_equal "", @field.process(row, header)
+      assert_equal nil, @field.process(row, header)
     end
 
     it 'converts a value if necessary' do
