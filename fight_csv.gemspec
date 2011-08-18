@@ -47,7 +47,7 @@ You can easily define types like Integer or Array for CSV through converters.
     "test/test_record.rb",
     "test/test_schema.rb"
   ]
-  s.homepage = %q{http://github.com/mkorfmann/fight_csv}
+  s.homepage = %q{http://github.com/railslove/fight_csv}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
