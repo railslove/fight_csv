@@ -153,8 +153,12 @@ are two possible ways of doing this:
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
+## Author(s)
+
+[Manuel Korfmann](https://github.com/mkorfmann/)
+
 ## Copyright
 
-Copyright (c) 2011 Manuel Korfmann. See LICENSE.txt for
+Copyright (c) 2011 Railslove. See LICENSE.txt for
 further details.
 
