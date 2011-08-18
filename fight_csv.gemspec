@@ -9,16 +9,16 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Manuel Korfmann"]
-  s.date = %q{2011-06-11}
+  s.date = %q{2011-08-18}
   s.description = %q{
 Provides a nice DSL to describe your CSV document.
 CSV documents can be validated against this description.
 You can easily define types like Integer or Array for CSV through converters.
-}
+  }
   s.email = %q{manu@korfmann.info}
   s.extra_rdoc_files = [
     "LICENSE.txt",
-    "README.rdoc"
+    "README.md"
   ]
   s.files = [
     ".document",
@@ -26,16 +26,17 @@ You can easily define types like Integer or Array for CSV through converters.
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
-    "README.rdoc",
+    "README.md",
     "Rakefile",
     "VERSION",
+    "examples/timetracking.rb",
+    "fight_csv.gemspec",
     "lib/fight_csv.rb",
     "lib/fight_csv/data_source.rb",
     "lib/fight_csv/field.rb",
-    "lib/fight_csv/parser.rb",
     "lib/fight_csv/record.rb",
     "lib/fight_csv/schema.rb",
-    "sketch.rb",
+    "tags",
     "test/fixtures/cocktails.csv",
     "test/fixtures/prog_lang_schema.rb",
     "test/fixtures/programming_languages.csv",
@@ -43,7 +44,6 @@ You can easily define types like Integer or Array for CSV through converters.
     "test/helper.rb",
     "test/test_field.rb",
     "test/test_fight_csv.rb",
-    "test/test_parser.rb",
     "test/test_record.rb",
     "test/test_schema.rb"
   ]
@@ -59,12 +59,14 @@ You can easily define types like Integer or Array for CSV through converters.
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<constructable>, [">= 0"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.0"])
       s.add_development_dependency(%q<awesome_print>, [">= 0"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
       s.add_development_dependency(%q<rake>, [">= 0"])
     else
       s.add_dependency(%q<constructable>, [">= 0"])
+      s.add_dependency(%q<activesupport>, [">= 0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.0"])
       s.add_dependency(%q<awesome_print>, [">= 0"])
       s.add_dependency(%q<simplecov>, [">= 0"])
@@ -72,6 +74,7 @@ You can easily define types like Integer or Array for CSV through converters.
     end
   else
     s.add_dependency(%q<constructable>, [">= 0"])
+    s.add_dependency(%q<activesupport>, [">= 0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.0"])
     s.add_dependency(%q<awesome_print>, [">= 0"])
     s.add_dependency(%q<simplecov>, [">= 0"])
