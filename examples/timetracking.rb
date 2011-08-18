@@ -1,22 +1,13 @@
 require '../lib/fight_csv'
+
 csv = <<-CSV
-Date,Person,Client/Project,Minutes,Hours,Tags,Description,Billable,Invoiced,Invoice Reference
-2011-08-15,Manuel Korfmann,railslove,60,1.0,blogpost,"",yes,no,
-2011-08-15,Manuel Korfmann,railslove,60,1.0,meeting,"",yes,no,
-2011-08-15,Manuel Korfmann,reports,180,3.0,"concepting, research","",yes,no,
-2011-08-15,Manuel Korfmann,heidelberry,60,1.0,"meeting, research","",yes,no,
-2011-08-15,Manuel Korfmann,charts,60,1.0,coding,"",yes,no,
-2011-08-08,Michael Bumann,salesking,60,1.0,ec2 downtime,"",yes,no,
-2011-08-05,Tim  Schneider,persofaktum,60,1.0,inquiries#edit issue,"",yes,no,
-2011-08-05,Michael Bumann,salesking,210,3.5,brainstorming+besprechung kpis,"",yes,no,
-2011-08-03,Lars Brillert,Avocado Store,105,1.75,importer,tkgp kids,yes,no,
-2011-08-02,Tim  Schneider,salesking,90,1.5,boarding process,"",yes,no,
-2011-08-02,Lars Brillert,Avocado Store,120,2.0,feature development,kriterienfilter und badges,yes,no,
-2011-08-02,Lars Brillert,Avocado Store,165,2.75,operations,price delimiter; server fix; redirects,yes,no,
-2011-08-01,Mike Poltyn,time2king,120,2.0,"refactoring, testing","",yes,no,
-2011-08-01,Jan  Kus,salesking,360,6.0,"*unbillable, notartermin","",yes,no,
-2011-08-01,Tim  Schneider,lysbon,270,4.5,"coding, stuff bumper","",yes,no,
-2011-08-01,Lars Brillert,Avocado Store,180,3.0,"export, ticket work","",yes,no,
+Date,Person,Client/Project,Minutes,Tags,Billable
+2011-08-15,John Doe,handsomelabs,60,blogpost,no
+2011-08-15,Max Powers,beerbrewing,60,meeting,yes
+2011-08-15,Tyler Durden,babysitting,180,"concepting, research",yes
+2011-08-15,Hulk Hero,gardening,60,"meeting, research",no
+2011-08-15,John Doe,handsomelabs,60,coding,yes
+2011-08-08,John Doe,handsomelabs,60,"blabla, meeting",yes
 CSV
 
 class LogEntry
@@ -48,7 +39,8 @@ class LogEntry
 end
 
 
-names = Hash.new { [] }
-LogEntry.import(csv).each do |log_entry|
-  names[log_entry.person] |= log_entry.tags
-end
+records = LogEntry.records csv
+
+# Persons who have worked on billable projects
+billable_entries = records.select(&:billable)
+puts billable_entries.map(&:person).uniq.join(" - ")
