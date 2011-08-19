@@ -1,5 +1,7 @@
 # Fight CSV!
 
+![Fight CSV](http://u1.ipernity.com/19/62/79/11256279.cfcee0bd.240.jpg)
+
 It's 2011, and parsing CSV with Ruby still sucks? Enter FightCSV! It
 will take the cumbersome out of your CSV parsing, while keeping the
 awesome! Want some taste of that juicy fresh? Check out this example:
