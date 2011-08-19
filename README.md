@@ -151,12 +151,14 @@ defining how the column is called you can specify the number of the
 column counting from left as an argument to field.
 
 Consider the following CSV:
+
 ```
 Ruby,object oriented
 Scheme,functional
 ```
 
 Now you can define a ```ProgrammingLanguage``` class like this:
+
 ```ruby
 class ProgrammingLanguage
   include FightCSV::Record
