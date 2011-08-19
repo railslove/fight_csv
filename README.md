@@ -176,6 +176,26 @@ end
 
 See the examples section for executable versions of these examples.
 
+## CSV format
+
+Use the col_sep, row_sep and quote_char csv_options to costumize the csv
+format. Consider the following csv document:
+
+```
+Germany EUR/`United States` USD
+```
+
+You can costumize the csv format like so:
+
+```ruby
+class Country
+  schema do
+     csv_options = { col_sep: " ", row_sep: "/", quote_char: "`" }
+     field 1, identifier: :name
+     field 2, identifier: :currency
+  end
+end
+```
 
 ## Contributing to fight\_csv
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
