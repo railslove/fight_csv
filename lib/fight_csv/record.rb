@@ -7,15 +7,15 @@ module FightCSV
         @schema = schema
       end
 
-      def records(io)
-        data_source = DataSource.new(io: io)
+      def records(io, csv_options = {})
+        data_source = DataSource.new(io: io, csv_options: @schema.csv_options.merge(csv_options))
         data_source.map { |row,additions|self.new(row, additions) }
       end
 
-      def import(io)
+      def import(io, csv_options = {})
         Enumerator.new do |yielder|
           record = self.new
-          data_source = DataSource.new(io: io)
+          data_source = DataSource.new(io: io, csv_options: @schema.csv_options.merge(csv_options))
           data_source.each do |row, additions|
             record.header = additions[:header]
             record.row = row

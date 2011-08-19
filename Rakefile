@@ -15,7 +15,7 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "fight_csv"
-  gem.homepage = "http://github.com/mkorfmann/fight_csv"
+  gem.homepage = "http://github.com/railslove/fight_csv"
   gem.license = "MIT"
   gem.summary = %Q{JSON-Schema + ActiveModel for CSV}
   gem.description = %Q{

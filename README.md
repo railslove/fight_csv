@@ -146,6 +146,36 @@ are two possible ways of doing this:
     ```
     Doing so you can avoid memory leaks on big csv documents.
 
+## CSV without a header
+
+Sometimes you may want to parse csv without a header. Instead of
+defining how the column is called you can specify the number of the
+column counting from left as an argument to field.
+
+Consider the following CSV:
+
+```
+Ruby,object oriented
+Scheme,functional
+```
+
+Now you can define a ```ProgrammingLanguage``` class like this:
+
+```ruby
+class ProgrammingLanguage
+  include FightCSV::Record
+
+
+  schema do
+    csv_options = { header: false }
+    field 1, identifier: :name
+    field 2, identifier: :main_paradigm
+  end
+end
+```
+
+See the examples section for executable versions of these examples.
+
 
 ## Contributing to fight\_csv
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet

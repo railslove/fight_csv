@@ -27,6 +27,27 @@ describe 'Record' do
       assert records.all? { |r| Record === r }
       assert_equal 'bar', records.first.foo
     end
+
+    it 'takes default csv_options from schema' do
+      @schema.csv_options[:col_sep] = "|"
+      records = @klass.records("Foo|Foz\nbar|baz\nfoo|foz")
+      assert_equal 'bar', records.first.foo
+    end
+
+    it 'is possible to override default schema csv_options' do
+      @schema.csv_options[:col_sep] = "|"
+      records = @klass.records("Foo;Foz\nbar;baz\nfoo;foz", col_sep: ';')
+      assert_equal 'bar', records.first.foo
+    end
+
+    it 'is possible to omit the header' do
+      @schema.fields = []
+      @schema.field 1, identifier: :foo
+      @schema.field 2, identifier: :bar
+      @schema.csv_options[:header] = false
+      records = @klass.records("bar;baz\nfoo;foz", col_sep: ';')
+      assert_equal 'bar', records.first.foo
+    end
   end
 
   describe 'import' do
