@@ -86,6 +86,7 @@ describe 'Record' do
         assert_equal :bar, record.foo
       end
     end
+
     describe 'writers' do
       it 'allow write access to attributes in the row' do
         record = @klass.new(['Bar'], schema: @schema, header: ['Foo'])
