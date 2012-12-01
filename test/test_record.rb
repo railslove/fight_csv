@@ -24,7 +24,7 @@ describe 'Record' do
   describe 'records' do
     it 'maps each row to a record object' do
       records = @klass.records("Foo,Foz\nbar,baz\nfoo,foz")
-      assert records.all? { |r| Record === r }
+      assert records.all? { |r| FightCSV::Record === r }
       assert_equal 'bar', records.first.foo
     end
 

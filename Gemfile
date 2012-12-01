@@ -12,5 +12,4 @@ group :development do
   gem 'rake'
 end
 
-gem 'constructable'
 gem 'activesupport'

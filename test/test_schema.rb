@@ -17,14 +17,14 @@ describe 'Schema' do
     end
 
     it 'accepts a file name' do
-      schema = Schema.new fixture('prog_lang_schema.rb')
+      schema = FightCSV::Schema.new fixture('prog_lang_schema.rb')
       assert_equal FightCSV::Schema, schema.class
       assert_equal 'Name', schema.fields.first.matcher
       assert_equal 'Creator', schema.fields.last.matcher
     end
 
     it 'also responds to a block' do
-      schema = Schema.new do
+      schema = FightCSV::Schema.new do
         field 'Foo', identifier: :foo
       end
 
