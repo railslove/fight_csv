@@ -1,18 +1,21 @@
 module FightCSV
   class Field
-    constructable :converter, validate_type: Proc, accessible: true
-    constructable :identifier, validate_type: Symbol, accessible: true
-    constructable :validator, accessible: true, default: ->{/.*/}
+    attr_accessor :converter
+    attr_writer :identifier
+    attr_reader :validator
 
     attr_accessor :matcher
 
     def initialize(matcher, options = {})
       @matcher = matcher
+      @converter = options[:converter]
+      @identifier = options[:identifier]
+      @validator = options[:validator] ||  /.*/
     end
 
     def identifier
-      if super
-        super
+      if @identifier
+        @identifier
       else
         case self.matcher
         when String
@@ -21,6 +24,10 @@ module FightCSV
           raise ArgumentError, "Please specify an identifier"
         end
       end
+    end
+
+    def validator=(validator)
+      @validator = validator ||= -> { /.*/ }
     end
 
     def validate(row, header = nil)

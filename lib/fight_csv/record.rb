@@ -33,15 +33,16 @@ module FightCSV
       end
     end
 
-    module InstanceMethods
-      constructable :schema, validate_type: Schema, accessible: true
-      constructable :header, accessible: true
+    attr_reader :schema
+    attr_accessor :header
 
       attr_accessor :row
       attr_reader :errors
 
 
       def initialize(row = nil,options = {})
+        @schema = options[:schema]
+        @header = options[:header]
         @schema ||= self.class.schema
         self.row = row if row
       end
@@ -56,7 +57,7 @@ module FightCSV
       end
 
       def schema=(schema)
-        super
+        @schema = schema
         self.row = @raw_row
       end
 
@@ -86,6 +87,5 @@ module FightCSV
           super
         end
       end
-    end
   end
 end

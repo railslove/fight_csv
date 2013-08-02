@@ -5,10 +5,17 @@ module FightCSV
 
     ALLOWED_OPTIONS = [:col_sep, :row_sep, :quote_char]
 
-    constructable :io, readable: true
-    constructable :csv_options,
-      accessible: true,
-      default: ->{ Hash.new }
+    attr_accessor :io
+    attr_reader :csv_options
+
+    def csv_options=(csv_options)
+      @csv_options = csv_options || ->{ Hash.new }
+    end
+
+    def initialize(options ={})
+      @io = options[:io]
+      @csv_options = options[:csv_options] || ->{ Hash.new }
+    end
 
     def each
       csv = CSV.new(self.io, Hash[csv_options.select { |opt| ALLOWED_OPTIONS.include? opt }])
