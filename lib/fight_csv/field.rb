@@ -8,9 +8,9 @@ module FightCSV
 
     def initialize(matcher, options = {})
       @matcher = matcher
-      @converter=options[:converter]
-      @identifier=options[:identifier]
-      @validator = options[:validator] ||=  /.*/
+      @converter = options[:converter]
+      @identifier = options[:identifier]
+      @validator = options[:validator] ||  /.*/
     end
 
     def identifier

@@ -9,12 +9,12 @@ module FightCSV
     attr_reader :csv_options
 
     def csv_options=(csv_options)
-      @csv_options = csv_options ||= ->{ Hash.new }
+      @csv_options = csv_options || ->{ Hash.new }
     end
 
     def initialize(options ={})
       @io = options[:io]
-      @csv_options = options[:csv_options] ||= ->{ Hash.new }
+      @csv_options = options[:csv_options] || ->{ Hash.new }
     end
 
     def each

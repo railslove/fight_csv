@@ -57,7 +57,7 @@ module FightCSV
       end
 
       def schema=(schema)
-        @schema=schema
+        @schema = schema
         self.row = @raw_row
       end
 
